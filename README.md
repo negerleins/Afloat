@@ -126,4 +126,4 @@ Contributions are welcome! Feel free to fork the repository and submit pull requ
 
 ## License
 
-[Your License Here]
+[MIT license](https://github.com/negerleins/LightingFramework?tab=MIT-1-ov-file#readme)
