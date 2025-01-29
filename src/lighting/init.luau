@@ -161,7 +161,7 @@ type SkyMethod = (render: boolean, config: SkyEnum, condition: ObjectCondition?)
 type AtmosphereMethod = (render: boolean, config: AtmosphereEnum, condition: ObjectCondition?) -> ObjectType
 
 type LightingMethods = {
-	TweenArray: (object: ObjectType, array: { any }, TweenInfo, lerpTime: number?) -> (),
+	TweenArray: (object: ObjectType, array: { any }, TweenInfo) -> (),
 	GetLightingInstance: (class: string) -> Object & Instance,
 	Instances: {
 		number: "NumberValue",
