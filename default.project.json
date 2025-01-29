@@ -11,17 +11,8 @@
 
 
     "ReplicatedStorage": {
-      "Afloat": {
-        "$path": "src/afloat"
-      },
       "Lighting": {
         "$path": "src/lighting"
-      }
-    },
-
-    "ServerScriptService": {
-      "Runtime": {
-        "$path": "src/server"
       }
     },
 
