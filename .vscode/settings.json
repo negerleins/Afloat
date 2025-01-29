@@ -1,0 +1,5 @@
+{
+    "luau-lsp.sourcemap.enabled": true,
+    "luau-lsp.platform.type": "roblox",
+    "luau-lsp.types.definitionFiles": ["types/roblox.d.lua"]
+  }

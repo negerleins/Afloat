@@ -1,0 +1,36 @@
+{
+  "name": "Afloat",
+  "tree": {
+    "$className": "DataModel",
+
+    "Lighting": {
+        "LightingPresets": {
+            "$path": "src/presets"
+        }
+    },
+
+
+    "ReplicatedStorage": {
+      "Afloat": {
+        "$path": "src/afloat"
+      },
+      "Lighting": {
+        "$path": "src/lighting"
+      }
+    },
+
+    "ServerScriptService": {
+      "Runtime": {
+        "$path": "src/server"
+      }
+    },
+
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Client": {
+          "$path": "src/client"
+        }
+      }
+    }
+  }
+}
