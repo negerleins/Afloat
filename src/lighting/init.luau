@@ -123,7 +123,7 @@ export type EnumObjects = {
 }
 
 type CreateEnumsConstructor = {
-    EnumArray: { any },
+	EnumArray: { any },
 }
 
 type CreateEnumsType = typeof(setmetatable) & CreateEnumsConstructor
@@ -167,14 +167,14 @@ type LightingMethods = {
 		number: "NumberValue",
 		Color3: "Color3Value",
 	},
-	Tweens: { [string] : { Tween } },
+	Tweens: { [string]: { Tween } },
 	Object: {
 		Sky: SkyMethod,
-        ColorCorrection: ColorCorrectionMethod,
-        DepthOfField: DepthOfFieldMethod,
-        Blur: BlurMethod,
-        Atmosphere: AtmosphereMethod,
-        Bloom: BloomMethod
+		ColorCorrection: ColorCorrectionMethod,
+		DepthOfField: DepthOfFieldMethod,
+		Blur: BlurMethod,
+		Atmosphere: AtmosphereMethod,
+		Bloom: BloomMethod,
 	},
 	Enums: EnumObjects,
 }
@@ -182,23 +182,23 @@ type LightingMethods = {
 local Framework = {
 	CreateEnums = function(enumArray)
 		local metatable = setmetatable({
-            EnumArray = enumArray,
-        }, {
-            __index = function(object, index): any
-                local result, found = nil, table.find(object.EnumArray, index) :: number
+			EnumArray = enumArray,
+		}, {
+			__index = function(object, index): any
+				local result, found = nil, table.find(object.EnumArray, index) :: number
 
 				if typeof(found) == "number" then
 					result = object.EnumArray[found]
 				elseif found then
 					result = found
-				end;
+				end
 
-				return result;
-            end,
-            __newindex = function()
-                error("Cannot modify read-only enum", 2)
-            end,
-        })
+				return result
+			end,
+			__newindex = function()
+				error("Cannot modify read-only enum", 2)
+			end,
+		})
 
 		return metatable :: CreateEnumsType | any -- Script Analysis Shut up
 	end,
@@ -249,30 +249,30 @@ local Lighting = {
 			"Glare",
 			"Haze",
 		}),
-        Bloom = Framework.CreateEnums({
-            "Enabled",
-            "Intensity",
-            "Size",
-            "Threshold",
-        }),
-        Blur = Framework.CreateEnums({
-            "Enabled",
-            "Size",
-        }),
-        DepthOfField = Framework.CreateEnums({
-            "Enabled",
-            "FarIntensity",
-            "FocusDistance",
-            "InFocusRadius",
-            "NearIntensity",
-        }),
-        ColorCorrection = Framework.CreateEnums({
-            "Brightness",
-            "Contrast",
-            "Enabled",
-            "Saturation",
-            "TintColor",
-        }),
+		Bloom = Framework.CreateEnums({
+			"Enabled",
+			"Intensity",
+			"Size",
+			"Threshold",
+		}),
+		Blur = Framework.CreateEnums({
+			"Enabled",
+			"Size",
+		}),
+		DepthOfField = Framework.CreateEnums({
+			"Enabled",
+			"FarIntensity",
+			"FocusDistance",
+			"InFocusRadius",
+			"NearIntensity",
+		}),
+		ColorCorrection = Framework.CreateEnums({
+			"Brightness",
+			"Contrast",
+			"Enabled",
+			"Saturation",
+			"TintColor",
+		}),
 	},
 	Tweens = {},
 	Instances = {
@@ -289,42 +289,48 @@ Lighting.GetLightingInstance = function(class: string)
 end
 
 Lighting.TweenArray = function(object, config, tweenInfo)
-    local lightingInstance = Lighting.GetLightingInstance(object.Class)
-    if not lightingInstance then return end
+	local lightingInstance = Lighting.GetLightingInstance(object.Class)
+	if not lightingInstance then
+		return
+	end
 
+	if Lighting.Tweens[object.Class] then
+		for index, tween in Lighting.Tweens[object.Class] do
+			tween:Pause()
+		end
+	else
+		Lighting.Tweens[object.Class] = {}
+	end
 
-    if Lighting.Tweens[object.Class] then
-        for index, tween in Lighting.Tweens[object.Class] do
-            tween:Pause();
-        end
-    else
-        Lighting.Tweens[object.Class] = {};
-    end;
+	local tweenableProperties = {}
+	for property, targetValue in pairs(config) do
+		if (lightingInstance :: any)[property] == nil then
+			continue
+		end
+		if (lightingInstance :: any)[property] == targetValue then
+			continue
+		end
 
-    local tweenableProperties = {}
-    for property, targetValue in pairs(config) do
-        if (lightingInstance :: any)[property] == nil then continue end
-        if (lightingInstance :: any)[property] == targetValue then continue end;
+		local currentValue = (lightingInstance :: any)[property]
+		local valueType = typeof(currentValue)
 
-        local currentValue = (lightingInstance :: any)[property]
-        local valueType = typeof(currentValue)
+		if currentValue == targetValue then
+			continue
+		end
 
-        if currentValue == targetValue then continue end
+		if valueType == "number" or valueType == "Color3" then
+			tweenableProperties[property] = targetValue
+		else
+			(lightingInstance :: any)[property] = targetValue
+		end
+	end
 
-        if valueType == "number" or valueType == "Color3" then
-            tweenableProperties[property] = targetValue
-        else
-            (lightingInstance :: any)[property] = targetValue
-        end
-    end
-
-    if next(tweenableProperties) then
-        local tween = TweenService:Create(lightingInstance, tweenInfo, tweenableProperties)
-        table.insert(Lighting.Tweens[object.Class], tween);
-        tween:Play()
-    end
+	if next(tweenableProperties) then
+		local tween = TweenService:Create(lightingInstance, tweenInfo, tweenableProperties)
+		table.insert(Lighting.Tweens[object.Class], tween)
+		tween:Play()
+	end
 end
-
 
 Lighting.Object.Sky = Framework.CreateObject("Sky")
 
